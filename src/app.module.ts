@@ -12,15 +12,14 @@ import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './utility/common/role.guard';
 import { CurrentUserMiddleware } from './utility/middlewares/current-user-middleware';
 import path from 'path';
+import { JwtService } from '@nestjs/jwt';
+import { AuthGuard } from './auth/guard/auth.guard';
 
 @Module({
   imports: [TypeOrmModule.forRoot(dataSourceOptions), PlazeruserModule, LeaverequestModule, LeavetypeModule,  UserleaveModule,AuthModule],
   controllers: [AppController],
   providers: [AppService,
-    {
-      provide: APP_GUARD,
-    useClass: RolesGuard,
-    }
+    
   ],
 })
 

@@ -48,4 +48,23 @@ export class AuthService {
     }
     throw new UnauthorizedException('user name or password are Not Crrrect');
   }
-}
+
+  async refershToken(user:any){
+    const payload = {
+      username: user.username,
+      sub:user.sub
+    };
+    return{
+      accessToken: await this.jwtService.signAsync(payload, {
+        expiresIn: '1h',
+        secret: process.env.jwtSecretKey,
+      }),
+    
+    refreshTokens: {
+      accessToken: await this.jwtService.signAsync(payload, {
+        expiresIn: '7d',
+        secret: process.env.jwtRefreshTokenKey,
+      }),
+    },
+  }
+}}

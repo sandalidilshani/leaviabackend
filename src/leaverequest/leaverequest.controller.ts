@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseEnumPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseEnumPipe, UseGuards } from '@nestjs/common';
 import { LeaverequestService } from './leaverequest.service';
 import { CreateLeaverequestDto } from './dto/create-leaverequest.dto';
 import { UpdateLeaverequestDto } from './dto/update-leaverequest.dto';
 import{LeaveRequest} from './entities/leaverequest.entity'
 import {  leaveStatus } from 'src/utility/common/leaverequest..leavestatus.enum';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
 
 @Controller('leaverequest')
 export class LeaverequestController {

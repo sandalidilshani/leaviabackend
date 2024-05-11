@@ -16,6 +16,7 @@ import {
   
   @Entity()
   export class Plazeruser {
+    [x: string]: any;
     @PrimaryGeneratedColumn()
     userid: number;
   

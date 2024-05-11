@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { PlazeruserService } from './plazeruser.service';
 import { CreatePlazeruserDto } from './dto/create-plazeruser.dto';
 import { UpdatePlazeruserDto } from './dto/update-plazeruser.dto';
-import { userSignInDto } from './dto/user-signin.dto';
 import { Roles } from 'src/utility/common/roles.decorator';
 import { Role } from 'src/utility/common/role.enum';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
 
 @Controller('plazeruser')
 export class PlazeruserController {
@@ -17,31 +17,27 @@ export class PlazeruserController {
 
   
   @Get()
-@Roles(Role.Manager)
   findAll() {
     return this.plazeruserService.findAll();
   }
   
-  @Get('roles/:userid')
-  async getuserroles(@Param('userid')userid:number) {
-    return this.plazeruserService.fetchUserRole(userid);
+  @Get('roles/:username')
+  async getuserroles(@Param('username')username:string) {
+    return this.plazeruserService.getuserroleByUserName(username);
   }
-
 
   @Get(':username')
   findOne(@Param('username' )username: string) {
-    return this.plazeruserService.findOne(username);
+    return this.plazeruserService.findUserByUserName(username);
   }
 
-  @Post(':id')
-  update(@Param('id') id: string, @Body() updatePlazeruserDto: UpdatePlazeruserDto) {
-    return this.plazeruserService.update(+id, updatePlazeruserDto);
-  }
-
+  
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.plazeruserService.remove(+id);
+    //return this.plazeruserService.remove();
   }
+
+  
 }
 
 
