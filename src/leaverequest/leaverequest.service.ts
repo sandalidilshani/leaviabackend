@@ -3,16 +3,14 @@ import { CreateLeaverequestDto } from './dto/create-leaverequest.dto';
 import { UpdateLeaverequestDto } from './dto/update-leaverequest.dto';
 import { LeaveRequest } from './entities/leaverequest.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, In, Like, Repository } from 'typeorm';
+import { Equal, In, Like, Repository, UpdateResult } from 'typeorm';
 import { Leavetype } from 'src/leavetype/entities/leavetype.entity';
 import { Plazeruser } from 'src/plazeruser/entities/plazeruser.entity';
 import { leaveStatus } from 'src/utility/common/leaverequest..leavestatus.enum';
 import { error } from 'console';
+import { UpdateLeaveRequestStatusDto } from './dto/update-leaveStatus.dto';
 @Injectable()
 export class LeaverequestService {
-  update(arg0: number, updateLeaverequestDto: UpdateLeaverequestDto) {
-    throw new Error('Method not implemented.');
-  }
   constructor(
     @InjectRepository(LeaveRequest)
     private leaverequestRepository: Repository<LeaveRequest>,
@@ -42,11 +40,10 @@ export class LeaverequestService {
     );
     leaverequest.plazeruserid = plazeruser;
 
-    try{ 
+    try {
       return await this.leaverequestRepository.save(leaverequest);
-
-    }catch(err){
-      console.log(error)
+    } catch (err) {
+      console.log(error);
     }
   }
 
@@ -71,9 +68,7 @@ export class LeaverequestService {
           leaveTypeid: leaveType,
         },
       },
-      relations: {
-        leaveType: true,
-      },
+      relations: ['leaveType'],
     });
   }
 
@@ -83,14 +78,81 @@ export class LeaverequestService {
   ): Promise<LeaveRequest[]> {
     return await this.leaverequestRepository.find({
       where: { leavestatus: In[leavestatus] },
-      relations:['leaveType']
-       
-      
     });
   }
 
   //remove leave request
   async removeleaverequest(leaveId: number): Promise<void> {
     await this.leaverequestRepository.delete(leaveId);
+  }
+
+  //get user pending leaves by user id
+  async getPendingRequestsbyUser(userid: number) {
+    try {
+      const pendingRequests = await this.leaverequestRepository
+        .createQueryBuilder('leaverequest')
+        .leftJoinAndSelect('leaverequest.plazeruserid', 'Plazeruser')
+        .where('Plazeruser.userid = :userid', { userid })
+        .andWhere('leaverequest.leavestatus = :status', { status: '{pending}' })
+        .select([
+          'leaverequest.leaveId',
+          'leaverequest.leaveStart',
+          'leaverequest.leaveEnd',
+          'leaverequest.leaveReason',
+          'leaverequest.requestDate',
+          'leaverequest.leaveType',
+        ])
+        .getMany();
+
+      if (pendingRequests.length === 0) {
+        return 'No Pending request';
+      }
+      return pendingRequests;
+    } catch (error) {
+      console.error('Error in getPendingRequests:', error);
+      return null;
+    }
+  }
+
+  //update pending Request
+  async update(
+    leaveId: number,
+    updateleaverequestdto: UpdateLeaverequestDto,
+  ): Promise<UpdateResult> {
+    try {
+      const updateData: Partial<LeaveRequest> = {
+        leaveStart: new Date(updateleaverequestdto.leaveStart),
+        leaveEnd: new Date(updateleaverequestdto.leaveEnd),
+        leaveReason: updateleaverequestdto.leaveReason,
+        requestDate: new Date(updateleaverequestdto.requestDate),
+      };
+      return this.leaverequestRepository.update(leaveId, updateData);
+    } catch (error) {
+      console.error('Error in getPendingRequests:', error);
+      return null;
+    }
+  }
+
+  //update levae request status by HR
+  async updateleaveStatus(
+    leaveId: number,
+    updateleaverequeststatus: UpdateLeaveRequestStatusDto,
+  ): Promise<UpdateResult> {
+    try {
+      const updateData: Partial<LeaveRequest> = {
+        leavestatus: [updateleaverequeststatus.newStatus],
+      };
+      const result = await this.leaverequestRepository.update(
+        leaveId,
+        updateData,
+      );
+      if (result.affected === 0) {
+        throw new Error('Update failed: leave ID not found');
+      }
+      return result;
+    } catch (error) {
+      console.error('Error in getPendingRequests:', error);
+      return null;
+    }
   }
 }

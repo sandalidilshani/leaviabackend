@@ -11,11 +11,8 @@ export class UserLeave {
     @Column()
     totalLeaves:number;
 
-
     @OneToOne(()=>Plazeruser,(plazeruserid)=>plazeruserid.userleave)
     @JoinColumn()
     plazeruserid:Plazeruser;
-
-
 
 }

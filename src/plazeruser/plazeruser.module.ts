@@ -5,15 +5,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Plazeruser } from './entities/plazeruser.entity';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { RolesGuard } from 'src/utility/common/role.guard';
+import { PassportModule } from '@nestjs/passport';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports:[TypeOrmModule.forFeature([Plazeruser])],
   controllers: [PlazeruserController],
-  providers: [PlazeruserService,JwtService,{
-    provide:APP_GUARD,
-    useClass:RolesGuard
-  }],
+  providers: [PlazeruserService],
   
   exports:[PlazeruserService]
 })

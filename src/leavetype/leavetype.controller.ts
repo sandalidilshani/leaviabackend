@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { LeavetypeService } from './leavetype.service';
 import { CreateLeavetypeDto } from './dto/create-leavetype.dto';
 import { UpdateLeavetypeDto } from './dto/update-leavetype.dto';
@@ -33,4 +33,5 @@ export class LeavetypeController {
   remove(@Param('id') id: string) {
     return this.leavetypeService.remove(+id);
   }
+  
 }
