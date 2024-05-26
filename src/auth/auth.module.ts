@@ -8,6 +8,7 @@ import { authConstants } from './auth.constant';
 import { JWTStrategy } from './jwt.stratergy';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './local.strategy';
+import { RolesGuard } from './roles.guard';
 @Module({
   imports: [
     PlazeruserModule,

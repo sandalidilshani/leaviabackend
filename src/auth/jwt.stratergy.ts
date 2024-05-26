@@ -23,6 +23,6 @@ export class JWTStrategy extends PassportStrategy(Strategy) {
             if (!user) {
                 throw new UnauthorizedException('Login frist to access end point');
             }
-            return  payload.username ;
+            return { username: payload.username, roles: user.role}
         }
 }

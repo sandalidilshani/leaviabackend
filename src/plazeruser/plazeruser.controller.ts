@@ -17,6 +17,7 @@ import { UpdatePlazeruserDto } from './dto/update-plazeruser.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
+import { Role } from 'src/auth/roles.decorator';
 //import { AuthGuard } from 'src/auth/guard/auth.guard';
 
 @Controller('plazeruser')
@@ -38,11 +39,14 @@ export class PlazeruserController {
     return this.plazeruserService.getuserroleByUserName(username);
   }
 
-  @Get('userdetails')
+
+  @UseGuards(JwtAuthGuard,RolesGuard)
+  @Get('userdetails/:username')
+  @Role('developer')
   @UseGuards(JwtAuthGuard)
   findOne(@Param('username') username: string, @Req() req) {
     console.log(req.user);
-    return this.plazeruserService.findUserByUserName(req.user);
+    return this.plazeruserService.findUserByUserName(username);
   }
 
   @Delete(':id')
