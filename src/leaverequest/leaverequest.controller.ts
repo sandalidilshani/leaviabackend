@@ -21,7 +21,18 @@ import { UpdateLeaveRequestStatusDto } from './dto/update-leaveStatus.dto';
 
 @Controller('leaverequest')
 export class LeaverequestController {
-  constructor(private readonly leaverequestService: LeaverequestService) {}
+  constructor(private readonly leaverequestService: LeaverequestService) { }
+
+  //hr get all user's pending leaves
+  @Get('/allpendingleaves')
+  async getPendingRequest() {
+    return this.leaverequestService.getPendingRequests();
+  }
+  //hr get relevent user details and leave details
+  @Get('usersleavedetails/:leaveId')
+  async getLeaveDetail(@Param('leaveId') leaveId: number) {
+    return this.leaverequestService.getLeaveDetailsandUserDetails(leaveId);
+  }
 
   @Post('/addleave')
   async create(@Body() leaverequestDto: CreateLeaverequestDto): Promise<any> {
@@ -75,7 +86,6 @@ export class LeaverequestController {
     return this.leaverequestService.getPendingRequestsbyUser(userid);
   }
 
-  
   @Put('leave/:leaveId')
   async update(
     @Param('leaveId', ParseIntPipe) leveid: number,
@@ -84,13 +94,14 @@ export class LeaverequestController {
     return this.leaverequestService.update(leveid, updateleaverequest);
   }
 
-
   @Put('updateleavestatus/:leaveId')
   async updateleaveStatus(
     @Param('leaveId', ParseIntPipe) leveId: number,
-    @Body() updateleavestatusdto:UpdateLeaveRequestStatusDto,
-  ){
-    return this.leaverequestService.updateleaveStatus(leveId, updateleavestatusdto);
-
+    @Body() updateleavestatusdto: UpdateLeaveRequestStatusDto,
+  ) {
+    return this.leaverequestService.updateleaveStatus(
+      leveId,
+      updateleavestatusdto,
+    );
   }
 }

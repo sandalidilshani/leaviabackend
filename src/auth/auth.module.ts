@@ -4,11 +4,9 @@ import { Module } from '@nestjs/common';
 import { Plazeruser } from 'src/plazeruser/entities/plazeruser.entity';
 import { PlazeruserModule } from 'src/plazeruser/plazeruser.module';
 import { JwtModule } from '@nestjs/jwt';
-import { authConstants } from './auth.constant';
-import { JWTStrategy } from './jwt.stratergy';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './local.strategy';
-import { RolesGuard } from './roles.guard';
+import { authConstants } from './auth.constant';
+import { JWTStrategy } from './stratergy/jwt.stratergy';
 @Module({
   imports: [
     PlazeruserModule,
@@ -21,7 +19,7 @@ import { RolesGuard } from './roles.guard';
     PassportModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JWTStrategy,LocalStrategy],
-  exports: [AuthService,JWTStrategy],
+  providers: [AuthService,JWTStrategy ],
+  exports: [AuthService,],
 })
 export class AuthModule {}

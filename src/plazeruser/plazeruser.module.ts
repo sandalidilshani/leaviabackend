@@ -6,12 +6,11 @@ import { Plazeruser } from './entities/plazeruser.entity';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([Plazeruser])],
+  imports:[TypeOrmModule.forFeature([Plazeruser]),],
   controllers: [PlazeruserController],
-  providers: [PlazeruserService],
+  providers: [PlazeruserService,],
   
   exports:[PlazeruserService]
 })

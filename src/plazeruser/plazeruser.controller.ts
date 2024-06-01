@@ -15,9 +15,9 @@ import { PlazeruserService } from './plazeruser.service';
 import { CreatePlazeruserDto } from './dto/create-plazeruser.dto';
 import { UpdatePlazeruserDto } from './dto/update-plazeruser.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
-import { Role } from 'src/auth/roles.decorator';
+import { LocalAuthGuard } from 'src/auth/local-auth.guard';
+import { RoleGuard } from 'src/utility/guard/role.guard';
+import { Role } from 'src/utility/guard/role.decorator';
 //import { AuthGuard } from 'src/auth/guard/auth.guard';
 
 @Controller('plazeruser')
@@ -29,6 +29,10 @@ export class PlazeruserController {
     return this.plazeruserService.create(createPlazeruserDto);
   }
 
+
+  
+@UseGuards(LocalAuthGuard,RoleGuard)
+@Role('developer')
   @Get()
   findAll() {
     return this.plazeruserService.findAll();
@@ -40,12 +44,11 @@ export class PlazeruserController {
   }
 
 
-  @UseGuards(JwtAuthGuard,RolesGuard)
+
+  @UseGuards(LocalAuthGuard,RoleGuard)
+  @Role('user')
   @Get('userdetails/:username')
-  @Role('developer')
-  @UseGuards(JwtAuthGuard)
   findOne(@Param('username') username: string, @Req() req) {
-    console.log(req.user);
     return this.plazeruserService.findUserByUserName(username);
   }
 
@@ -67,7 +70,6 @@ export class PlazeruserController {
 
   //Hr Manager End points
   @Get('userdetails')
-  @UseGuards(JwtAuthGuard)
   findUserOne(@Body('username') username: string, @Req() req) {
     console.log(req.user);
     return this.plazeruserService.findUserByUserName(req.user);

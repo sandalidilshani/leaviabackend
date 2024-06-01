@@ -1,14 +1,12 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
-import { AuthService } from "./auth.service";
-import { authConstants } from "./auth.constant";
 import { ExtractJwt, Strategy } from "passport-jwt";
+import { authConstants } from "../auth.constant";
 
 @Injectable()
 export class JWTStrategy extends PassportStrategy(Strategy) {
 
     constructor(
-        private authservice:AuthService
     ) {
         super({
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), 
@@ -19,10 +17,7 @@ export class JWTStrategy extends PassportStrategy(Strategy) {
         
 
         async validate(payload: any) {
-            const user = await this.authservice.validateUser(payload.username);
-            if (!user) {
-                throw new UnauthorizedException('Login frist to access end point');
-            }
-            return { username: payload.username, roles: user.role}
+           console.log('validate',payload)
+            return { username: payload.username,}
         }
 }

@@ -57,6 +57,25 @@ export class LeaverequestService {
       where: { leaveId },
     });
   }
+  //get request details by Leaveid
+  async getLeaveDetailsandUserDetails(leaveId) {
+    const userDetails = await this.leaverequestRepository
+      .createQueryBuilder('leaverequest')
+      .leftJoinAndSelect('leaverequest.plazeruserid', 'plazeruser')
+      .where('leaverequest.leaveId = :leaveId', { leaveId })
+      .select([
+        'plazeruser.username',
+        'plazeruser.ufname',
+        'plazeruser.ulname',
+        'plazeruser.addressl1',
+        'plazeruser.addressl2',
+        'plazeruser.addressl3',
+        'plazeruser.role',
+      ])
+      .getRawOne();
+
+    return userDetails;
+  }
 
   //get leavea requests by leave type
   async getLeaveDetailsByleaveTypeid(
@@ -100,7 +119,6 @@ export class LeaverequestService {
           'leaverequest.leaveEnd',
           'leaverequest.leaveReason',
           'leaverequest.requestDate',
-          'leaverequest.leaveType',
         ])
         .getMany();
 
@@ -112,6 +130,31 @@ export class LeaverequestService {
       console.error('Error in getPendingRequests:', error);
       return null;
     }
+  }
+
+  //get leaves for hr pending
+  async getPendingRequests() {
+    const pendingRequests = await this.leaverequestRepository
+      .createQueryBuilder('leaverequest')
+      .innerJoinAndSelect('leaverequest.plazeruserid', 'plazeruser')
+      .where('leaverequest.leavestatus = :status', { status: '{pending}' })
+      .select([
+        'plazeruser.userid',
+        'plazeruser.ufname',
+        'plazeruser.ulname',
+        'leaverequest.leaveId',
+        'leaverequest.leaveStart',
+        'leaverequest.leaveEnd',
+        'leaverequest.leaveReason',
+        'leaverequest.requestDate',
+      ])
+      .getMany();
+
+    if (pendingRequests.length === 0) {
+      return 'No pending requests';
+    }
+
+    return pendingRequests;
   }
 
   //update pending Request

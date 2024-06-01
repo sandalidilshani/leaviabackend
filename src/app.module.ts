@@ -8,13 +8,14 @@ import { LeaverequestModule } from './leaverequest/leaverequest.module';
 import { LeavetypeModule } from './leavetype/leavetype.module';
 import { UserleaveModule } from './userleave/userleave.module';
 import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RoleGuard } from './utility/guard/role.guard';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(dataSourceOptions), PlazeruserModule, LeaverequestModule, LeavetypeModule,  UserleaveModule,AuthModule],
-  controllers: [AppController],
-  providers: [AppService,
-    
-  ],
+  imports: [TypeOrmModule.forRoot(dataSourceOptions), PlazeruserModule, LeaverequestModule, LeavetypeModule,  UserleaveModule, AuthModule, ],
+  controllers: [AppController, ],
+  providers: [AppService, 
+   ],
 })
 
 export class AppModule {

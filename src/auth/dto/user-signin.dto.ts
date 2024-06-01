@@ -6,6 +6,6 @@ export class userSignInDto{
   username: string;
 
   @IsString()
-  upassword: string;
+  password: string;
 
 }
